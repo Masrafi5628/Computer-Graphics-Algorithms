@@ -20,7 +20,6 @@
          var gl = canvas.getContext('experimental-webgl');
          var shaderProgram;
 
-         // Function to initialize WebGL context
          function initWebGL() {
             if (!gl) {
                alert("Unable to initialize WebGL. Your browser may not support it.");
@@ -33,9 +32,7 @@
             return gl;
          }
 
-         // Function to create shaders, compile, and link program
          function initShaders() {
-            // Vertex shader source code
             var vertCode =
                'attribute vec3 coordinates;' +
                'void main(void) {' +
@@ -43,7 +40,6 @@
                '   gl_PointSize = 2.0;' + // Adjust point size
                '}';
 
-            // Fragment shader source code
             var fragCode =
                'void main(void) {' +
                '   gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);' + // Black color for points
@@ -69,7 +65,6 @@
             return shaderProgram;
          }
 
-         // Function to initialize buffers and draw DDA line
          function drawDDALine(x0, y0, x1, y1) {
             var dx = x1 - x0;
             var dy = y1 - y0;
@@ -99,7 +94,6 @@
             return vertices.length / 3; // Return number of points
          }
 
-         // Function to draw axes
          function drawAxes() {
             var vertices = [
                -1.0, 0.0, 0.0,
@@ -119,7 +113,6 @@
             gl.drawArrays(gl.LINES, 0, 4); // Draw X and Y axes
          }
 
-         // Function to draw the scene
          function drawScene() {
             gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 

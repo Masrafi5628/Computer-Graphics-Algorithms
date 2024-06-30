@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>WebGL Cohen-Sutherland Line Clipping</title>
+    <style>
+        body {
+            background-color: #f0f0f0; /* Light gray background */
+            font-family: Arial, sans-serif;
+        }
+        canvas { 
+            display: block;
+            margin: 20px auto; /* Center the canvas */
+            border: 1px solid black;
+            background-color: white; /* White canvas background */
+        }
+        #controls {
+            text-align: center;
+            margin-top: 20px;
+        }
+        #controls label {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="glcanvas" width="800" height="600"></canvas>
+    <div id="controls">
+        <label for="x1">X1:</label>
+        <input type="number" id="x1" value="150">
+        <label for="y1">Y1:</label>
+        <input type="number" id="y1" value="150"><br>
+        <label for="x2">X2:</label>
+        <input type="number" id="x2" value="750">
+        <label for="y2">Y2:</label>
+        <input type="number" id="y2" value="550"><br>
+        <button onclick="drawWithUserInput()">Draw Line</button>
+    </div>
+    <script src="./script.js"></script>
+</body>
+</html>
