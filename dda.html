@@ -1,19 +1,18 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Bresenham's Line Drawing</title>
+    <title>WebGL DDA Line Drawing</title>
     <style>
         body {
+            background-color: #f0f0f0; /* Light gray background */
             font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
-            text-align: center;
-            margin: 20px;
+            text-align: center; /* Center align the content */
         }
-        canvas {
-            border: 1px solid black;
-            background-color: white;
+        canvas { 
             display: block;
-            margin: 0 auto;
+            margin: 20px auto; /* Center the canvas */
+            border: 1px solid black;
+            background-color: white; /* White canvas background */
         }
         #controls {
             margin-top: 20px;
@@ -21,30 +20,39 @@
         #controls label {
             margin-right: 10px;
         }
-        button {
+        #controls input[type="number"] {
+            width: 60px;
+            padding: 5px;
+            margin-right: 10px;
+            text-align: center;
+        }
+        #controls button {
             padding: 10px 20px;
-            font-size: 16px;
-            background-color: #4CAF50;
+            background-color: #4CAF50; /* Green background */
             color: white;
             border: none;
             cursor: pointer;
+            transition: background-color 0.3s ease;
         }
-        button:hover {
-            background-color: #45a049;
+        #controls button:hover {
+            background-color: #45a049; /* Darker green on hover */
         }
     </style>
 </head>
 <body>
     <canvas width="570" height="570" id="my_Canvas"></canvas>
+    <br>
     <div id="controls">
         <label for="x0">X0:</label>
         <input type="number" id="x0" value="0">
         <label for="y0">Y0:</label>
-        <input type="number" id="y0" value="0"><br>
+        <input type="number" id="y0" value="0">
+        <br>
         <label for="x1">X1:</label>
         <input type="number" id="x1" value="400">
         <label for="y1">Y1:</label>
-        <input type="number" id="y1" value="500"><br>
+        <input type="number" id="y1" value="500">
+        <br>
         <button onclick="drawScene()">Draw Line</button>
     </div>
 
@@ -53,7 +61,6 @@
         var gl = canvas.getContext('experimental-webgl');
         var shaderProgram;
 
-        // Function to initialize WebGL context
         function initWebGL() {
             if (!gl) {
                 alert("Unable to initialize WebGL. Your browser may not support it.");
@@ -66,9 +73,7 @@
             return gl;
         }
 
-        // Function to create shaders, compile, and link program
         function initShaders() {
-            // Vertex shader source code
             var vertCode =
                 'attribute vec3 coordinates;' +
                 'void main(void) {' +
@@ -76,7 +81,6 @@
                 '   gl_PointSize = 2.0;' + // Adjust point size
                 '}';
 
-            // Fragment shader source code
             var fragCode =
                 'void main(void) {' +
                 '   gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);' + // Black color for points
@@ -102,24 +106,22 @@
             return shaderProgram;
         }
 
-        // Function to initialize buffers and draw Bresenham's line
-        function drawBresenhamLine(x0, y0, x1, y1) {
-            var dx = Math.abs(x1 - x0);
-            var dy = Math.abs(y1 - y0);
-            var sx = (x0 < x1) ? 1 : -1;
-            var sy = (y0 < y1) ? 1 : -1;
-            var err = dx - dy;
+        function drawDDALine(x0, y0, x1, y1) {
+            var dx = x1 - x0;
+            var dy = y1 - y0;
+            var step = Math.max(Math.abs(dx), Math.abs(dy));
+
+            var x_incr = dx / step;
+            var y_incr = dy / step;
 
             var vertices = [];
             var x = x0;
             var y = y0;
 
-            while (true) {
+            for (var i = 0; i <= step; i++) {
                 vertices.push(x / canvas.width, y / canvas.height, 0.0); // Normalize coordinates
-                if (x === x1 && y === y1) break;
-                var e2 = err * 2;
-                if (e2 > -dy) { err -= dy; x += sx; }
-                if (e2 < dx) { err += dx; y += sy; }
+                x += x_incr;
+                y += y_incr;
             }
 
             var vertexBuffer = gl.createBuffer();
@@ -133,7 +135,6 @@
             return vertices.length / 3; // Return number of points
         }
 
-        // Function to draw axes
         function drawAxes() {
             var vertices = [
                 -1.0, 0.0, 0.0,
@@ -153,7 +154,6 @@
             gl.drawArrays(gl.LINES, 0, 4); // Draw X and Y axes
         }
 
-        // Function to draw the scene
         function drawScene() {
             gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
@@ -164,7 +164,7 @@
             var x1 = parseInt(document.getElementById("x1").value);
             var y1 = parseInt(document.getElementById("y1").value);
 
-            var numVertices = drawBresenhamLine(x0, y0, x1, y1); // Draw Bresenham's line
+            var numVertices = drawDDALine(x0, y0, x1, y1); // Draw DDA line
 
             gl.drawArrays(gl.POINTS, 0, numVertices); // Draw points
         }
@@ -172,6 +172,6 @@
         // Initialization
         var gl = initWebGL();
         var shaderProgram = initShaders();
-    </script>
-</body>
+      </script>
+   </body>
 </html>
